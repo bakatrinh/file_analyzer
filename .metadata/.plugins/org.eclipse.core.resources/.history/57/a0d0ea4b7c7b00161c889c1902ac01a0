@@ -1,0 +1,21 @@
+package file_analyzer;
+
+import java.io.File;
+
+public class FileAnalyzerController {
+	
+	private File _file;
+	private FileAnalyzerView _view;
+	
+	public FileAnalyzerController(FileAnalyzerView view) {
+		_view = view;
+	}
+	
+	public void openFile() {
+		
+	}
+	
+	public void setFile(File file)  {
+		_file = file;
+	}
+}

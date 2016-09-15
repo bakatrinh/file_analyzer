@@ -1,0 +1,26 @@
+package file_analyzer;
+
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
+public class FileAnalyzerController {
+	
+	private File _file;
+	private FileAnalyzerView _view;
+	
+	public FileAnalyzerController(FileAnalyzerView view) {
+		_view = view;
+	}
+	
+	public void openFile() {
+		int returnVal = _view.getFileChooser().showOpenDialog(null);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			_file = _view.getFileChooser().getSelectedFile();
+			
+			// Anthony, add code to use _file, convert to binary string, then output into text area here
+			// use _view.getTextArea() to select it, then set text, etc., you can open any type of file to test
+		}
+	}
+}

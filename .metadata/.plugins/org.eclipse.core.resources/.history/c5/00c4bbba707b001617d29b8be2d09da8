@@ -1,0 +1,19 @@
+package file_analyzer;
+
+import java.awt.EventQueue;
+
+public class FileAnalyzer {
+	public static void main(String[] args){
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				MainController mainController = new MainController();
+				Whiteboard mainGUI = new Whiteboard(mainController);
+				mainGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				mainGUI.pack();
+				mainGUI.setResizable(true);
+				mainGUI.setLocationRelativeTo(null);
+				mainGUI.setVisible(true);
+			}
+		});
+	}
+}

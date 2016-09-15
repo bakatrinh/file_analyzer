@@ -1,0 +1,97 @@
+package file_analyzer;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.border.Border;
+
+public class FileAnalyzerView extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private FileAnalyzerController _controller;
+	private JPanel _mainCenterScreen;
+	private JPanel _bottomPanel;
+	private JFileChooser _fileChooser;
+	private JButton _btnOpenFile;
+	private JButton _btnSaveOutput;
+	private JButton _btnCopyToClipboard;
+	private JButton _btnExit;
+	private JTextArea _textArea;
+	
+	public FileAnalyzerView() {
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		
+		_mainCenterScreen = new JPanel();
+		_mainCenterScreen.setLayout(new BorderLayout(0, 0));
+		_mainCenterScreen.setPreferredSize(new Dimension(700, 600));
+		
+		_bottomPanel = new JPanel();
+		_bottomPanel.setLayout(new FlowLayout());
+		
+		_btnOpenFile = new JButton("Open File");
+		_bottomPanel.add(_btnOpenFile);
+		
+		_btnSaveOutput = new JButton("Save Output");
+		_bottomPanel.add(_btnSaveOutput);
+		
+		_btnCopyToClipboard = new JButton("Copy to Clipboard");
+		_bottomPanel.add(_btnCopyToClipboard);
+		
+		_btnExit = new JButton("Exit");
+		_bottomPanel.add(_btnExit);
+		
+		Border border = BorderFactory.createLineBorder(Color.BLACK);
+		
+		_textArea = new JTextArea("Output Text ajlflkasjflf alsfjlafj alsfkjlaskfj alsfkjalskf jlaksjf alsfjla sfjlkjaslfkj aslkfjla sfjlaskjf laskjf laskjf lasjkfla sfjlaj"
+				+ "lfkajsflkajsfl\n alsjlakjsd alsjkd\n alsjdasjd \nas ladjslkjasdlkjasd");
+		_textArea.setBorder(border);
+		_textArea.setBackground(Color.LIGHT_GRAY);
+		_textArea.getCaret().setVisible(true);
+		_textArea.setEditable(false);
+		
+		JPanel textAreaContainer = new JPanel();
+		
+		_mainCenterScreen.add(_textArea, BorderLayout.CENTER);
+		
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		_mainCenterScreen.add(horizontalStrut, BorderLayout.WEST);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		_mainCenterScreen.add(horizontalStrut_1, BorderLayout.EAST);
+		
+		Component verticalStrut = Box.createVerticalStrut(20);
+		_mainCenterScreen.add(verticalStrut, BorderLayout.NORTH);
+		
+		Component verticalStrut_1 = Box.createVerticalStrut(20);
+		_mainCenterScreen.add(verticalStrut_1, BorderLayout.SOUTH);
+		
+		getContentPane().add(_mainCenterScreen, BorderLayout.CENTER);
+		getContentPane().add(_bottomPanel, BorderLayout.SOUTH);
+	}
+	
+	public JPanel getMainCenterScreen() {
+		return _mainCenterScreen;
+	}
+	
+	public JPanel getBottomPanel() {
+		return _bottomPanel;
+	}
+	
+	public void setController(FileAnalyzerController controller) {
+		_controller = controller;
+	}
+}

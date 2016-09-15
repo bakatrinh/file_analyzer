@@ -1,0 +1,38 @@
+package file_analyzer;
+
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
+public class FileAnalyzerController {
+	
+	private File _file;
+	private FileAnalyzerView _view;
+	
+	public FileAnalyzerController(FileAnalyzerView view) {
+		_view = view;
+	}
+	
+	public void openFile(JFileChooser fileChooser) {
+		int returnVal = _whiteboard.getFileChooser().showOpenDialog(_whiteboard);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			_file = _whiteboard.getFileChooser().getSelectedFile();
+			List<DShapeModel> temp = new ArrayList<>();
+			try {
+				XMLDecoder xmlIn = new XMLDecoder(new BufferedInputStream(new FileInputStream(_file)));
+				temp = (ArrayList<DShapeModel>) xmlIn.readObject();
+				xmlIn.close();
+				clear();
+				for (DShapeModel e : temp) {
+					addShapeToModelsList(e);
+				}
+				_currentViewingShape = null;
+				deselectShape();
+				setToolSelect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
