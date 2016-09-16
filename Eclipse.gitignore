@@ -62,6 +62,3 @@ local.properties
 # RVM and rbenv
 /.rvmrc
 /.rbenv-version
-
-# Bundler binstubs
-/bin/
