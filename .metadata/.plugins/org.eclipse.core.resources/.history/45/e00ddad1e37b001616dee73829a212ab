@@ -7,18 +7,8 @@
     <property name="jar.file"        value="${jar.dir}/${ant.project.name}.jar"/>
 	<property name="dist.lib.dir"     value="temp"/>
     <property name="main-class"     value="file_analyzer.FileAnalyzer"/>
-	
-	<target name="dir.check">
-	    <condition property="dir.exists">
-	      <available file="${lib.dir}" type="dir"/>
-	    </condition>
-	  </target>
-	
-	<target name="makelib" depends="dir.check" unless="dir.exists">
-		<mkdir dir="lib"/>
-	  </target>
 
-    <path id="libraries.path">
+    <path id="libraries.path">    
         <fileset dir="${lib.dir}">
             <include name="*.jar"/>
         </fileset>
