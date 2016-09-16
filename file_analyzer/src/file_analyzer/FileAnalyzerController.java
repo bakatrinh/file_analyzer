@@ -42,4 +42,8 @@ public class FileAnalyzerController {
 			}
 		}
 	}
+	
+	public File getFile() {
+		return _file;
+	}
 }

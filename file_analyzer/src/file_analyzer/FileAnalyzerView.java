@@ -17,6 +17,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -38,8 +39,7 @@ public class FileAnalyzerView extends JFrame {
 	private FileAnalyzerController _controller;
 	private JPanel _mainCenterScreen;
 	private JPanel _bottomPanel;
-	private JFileChooser _openFileChooser;
-	private JFileChooser _saveFileChooser;
+	private JFileChooser _fileChooser;
 	private JButton _btnOpenFile;
 	private JButton _btnSaveOutput;
 	private JButton _btnCopyToClipboard;
@@ -49,16 +49,41 @@ public class FileAnalyzerView extends JFrame {
 	public FileAnalyzerView() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
-		_openFileChooser = new JFileChooser();
+		_fileChooser = new JFileChooser(){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void approveSelection() {
+				File f = getSelectedFile();
+				String filePath = f.getAbsolutePath();
+				if (!filePath.endsWith(".txt")) {
+					f = new File(filePath + ".txt");
+				}
+				if (f.exists() && getDialogType() == SAVE_DIALOG) {
+					int result = JOptionPane.showConfirmDialog(this,"Overwrite file?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+					switch(result){
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.NO_OPTION:
+						return;
+					case JOptionPane.CLOSED_OPTION:
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					}
+				}
+				super.approveSelection();
+			}
+		};
 		File workingDirectory = new File(System.getProperty("user.dir"));
-		_openFileChooser.setCurrentDirectory(workingDirectory);
-		_openFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		_fileChooser.setCurrentDirectory(workingDirectory);
+		_fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		//_fileChooser.setFileFilter(new FileNameExtensionFilter("EXE File", "exe"));
-		
-		_saveFileChooser = new JFileChooser();
-		_saveFileChooser.setCurrentDirectory(workingDirectory);
-		_saveFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		_saveFileChooser.setFileFilter(new FileNameExtensionFilter("TXT File", "txt"));
 
 		_mainCenterScreen = new JPanel();
 		_mainCenterScreen.setLayout(new BorderLayout(0, 0));
@@ -70,17 +95,17 @@ public class FileAnalyzerView extends JFrame {
 		_btnOpenFile = new JButton("Open File");
 		_btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_controller.openFile(_openFileChooser);
+				_controller.openFile(_fileChooser);
 			}
 		});
-		
+
 		_bottomPanel.add(_btnOpenFile);
 
 		_btnSaveOutput = new JButton("Save Output");
 		_btnSaveOutput.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					_controller.saveFile(_saveFileChooser);
+					_controller.saveFile(_fileChooser);
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -142,7 +167,7 @@ public class FileAnalyzerView extends JFrame {
 	}
 
 	public JFileChooser getFileChooser() {
-		return _openFileChooser;
+		return _fileChooser;
 	}
 
 	public JTextArea getTextArea() {
@@ -156,7 +181,7 @@ public class FileAnalyzerView extends JFrame {
 	public JPanel getBottomPanel() {
 		return _bottomPanel;
 	}
-	
+
 	public void setController(FileAnalyzerController controller) {
 		_controller = controller;
 	}
