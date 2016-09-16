@@ -9,8 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,8 +36,7 @@ public class FileAnalyzerView extends JFrame {
 	private FileAnalyzerController _controller;
 	private JPanel _mainCenterScreen;
 	private JPanel _bottomPanel;
-	private JFileChooser _openFileChooser;
-	private JFileChooser _saveFileChooser;
+	private JFileChooser _fileChooser;
 	private JButton _btnOpenFile;
 	private JButton _btnSaveOutput;
 	private JButton _btnCopyToClipboard;
@@ -49,16 +46,11 @@ public class FileAnalyzerView extends JFrame {
 	public FileAnalyzerView() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 
-		_openFileChooser = new JFileChooser();
+		_fileChooser = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
-		_openFileChooser.setCurrentDirectory(workingDirectory);
-		_openFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		_fileChooser.setCurrentDirectory(workingDirectory);
+		_fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		//_fileChooser.setFileFilter(new FileNameExtensionFilter("EXE File", "exe"));
-		
-		_saveFileChooser = new JFileChooser();
-		_saveFileChooser.setCurrentDirectory(workingDirectory);
-		_saveFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		_saveFileChooser.setFileFilter(new FileNameExtensionFilter("TXT File", "txt"));
 
 		_mainCenterScreen = new JPanel();
 		_mainCenterScreen.setLayout(new BorderLayout(0, 0));
@@ -70,23 +62,13 @@ public class FileAnalyzerView extends JFrame {
 		_btnOpenFile = new JButton("Open File");
 		_btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_controller.openFile(_openFileChooser);
+				_controller.openFile(_fileChooser);
 			}
 		});
 		
 		_bottomPanel.add(_btnOpenFile);
 
 		_btnSaveOutput = new JButton("Save Output");
-		_btnSaveOutput.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					_controller.saveFile(_saveFileChooser);
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
 		_bottomPanel.add(_btnSaveOutput);
 
 		_btnCopyToClipboard = new JButton("Copy to Clipboard");
@@ -142,7 +124,7 @@ public class FileAnalyzerView extends JFrame {
 	}
 
 	public JFileChooser getFileChooser() {
-		return _openFileChooser;
+		return _fileChooser;
 	}
 
 	public JTextArea getTextArea() {
