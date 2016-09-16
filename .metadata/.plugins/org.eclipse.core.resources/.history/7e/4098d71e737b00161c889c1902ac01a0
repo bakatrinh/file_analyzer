@@ -1,9 +1,0 @@
-package file_analyzer;
-
-import java.io.File;
-
-public class FileAnalyzerController {
-	
-	private File _file;
-
-}
