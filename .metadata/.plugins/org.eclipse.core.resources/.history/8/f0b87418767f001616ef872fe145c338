@@ -15,15 +15,11 @@ public class FileAnalyzerController {
 
 	private File _file;
 	private FileAnalyzerView _view;
-	private String _outputString = "";
+	private String _outputString = ""; // Jervin Cruz
 
 	public FileAnalyzerController(FileAnalyzerView view) {
 		_view = view;
 		_view.setController(this);
-	}
-
-	public File getFile() {
-		return _file;
 	}
 
 	public void openFile(JFileChooser fileChooser) {
@@ -31,9 +27,9 @@ public class FileAnalyzerController {
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			_file = fileChooser.getSelectedFile();
-
+			
 			_view.getFileLabel().setText(_file.getName());
-
+						
 			Path path = FileSystems.getDefault().getPath(_file.getAbsolutePath());
 			try {
 				BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
@@ -46,7 +42,7 @@ public class FileAnalyzerController {
 			}
 		}
 	}
-
+	
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
 		int returnVal = fileChooser.showSaveDialog(_view);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -56,12 +52,16 @@ public class FileAnalyzerController {
 				_file = new File(filePath + ".txt");
 			}
 			try (PrintStream out = new PrintStream(new FileOutputStream(_file))) {
-				out.print(_outputString);
+			    out.print(_outputString);
 			}
 		}
 	}
-
-	public void copyClipboard() {
-
+	
+	public File getFile() {
+		return _file;
+	}
+	
+	public String getOutputString() {
+		return _outputString;
 	}
 }
