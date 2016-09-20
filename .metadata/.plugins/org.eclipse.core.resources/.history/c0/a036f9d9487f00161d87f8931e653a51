@@ -181,11 +181,6 @@ public class FileAnalyzerView extends JFrame {
 		_bottomPanel.add(_btnSaveOutput);
 
 		_btnCopyToClipboard = new JButton("Copy to Clipboard");
-		_btnCopyToClipboard.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				_controller.getOutputString();
-			}
-		});
 		_bottomPanel.add(_btnCopyToClipboard);
 
 		_btnExit = new JButton("Exit");
