@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 
 public class FileAnalyzerController {
 
@@ -29,8 +28,7 @@ public class FileAnalyzerController {
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			_file = fileChooser.getSelectedFile();
 			
-			JLabel fLabel = _view.getFileLabel();
-			fLabel.setText(_file.getName());
+			_view.getFileLabel().setText(_file.getName());
 						
 			Path path = FileSystems.getDefault().getPath(_file.getAbsolutePath());
 			try {
@@ -43,9 +41,6 @@ public class FileAnalyzerController {
 				System.out.println(e);
 			}
 		}
-		// Anthony, add code to use _file, convert to binary string, save string to _outputString, then output string into
-		// text area. Use _view.getTextArea() to select it box, then set text, etc., you can open any type of file to test
-		// add more functions here wherever you need
 	}
 	
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
