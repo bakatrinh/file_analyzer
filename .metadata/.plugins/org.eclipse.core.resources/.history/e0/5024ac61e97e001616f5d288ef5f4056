@@ -1,22 +1,26 @@
 package file_analyzer;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 import javax.swing.JLabel;
 
 public class FileAnalyzerController {
 
 	private File _file;
 	private FileAnalyzerView _view;
-	private String _outputString = "";
+	private String _outputString = "hi there";
 
 	public FileAnalyzerController(FileAnalyzerView view) {
 		_view = view;
@@ -35,10 +39,10 @@ public class FileAnalyzerController {
 			Path path = FileSystems.getDefault().getPath(_file.getAbsolutePath());
 			try {
 				BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-				_outputString = "Name: " + _file.getName() + "\n"
+				JTextArea tA = _view.getTextArea();
+				tA.setText("Name: " + _file.getName() + "\n"
 						+ "CreationTime: " + attr.creationTime() + "\n"
-						+ "... more file metadata here";
-				_view.getTextArea().setText(_outputString);
+						+ "... more file metadata here");
 			} catch(IOException e) {
 				System.out.println(e);
 			}

@@ -30,6 +30,9 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 
+import javax.swing.JLabel;
+
+
 public class FileAnalyzerView extends JFrame {
 
 	/**
@@ -46,6 +49,9 @@ public class FileAnalyzerView extends JFrame {
 	private JButton _btnCopyToClipboard;
 	private JButton _btnExit;
 	private JTextArea _textArea;
+	
+	// anthony
+	private JLabel _labelFileName;
 
 	public FileAnalyzerView() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -109,13 +115,19 @@ public class FileAnalyzerView extends JFrame {
 		_bottomPanel = new JPanel();
 		_bottomPanel.setLayout(new FlowLayout());
 
+		// anthony
+		_labelFileName = new JLabel("No file selected.");
+		
+		_bottomPanel.add(_labelFileName);
+		// anthony
+		
 		_btnOpenFile = new JButton("Open File");
 		_btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_controller.openFile(_fileChooser);
 			}
 		});
-
+		
 		_bottomPanel.add(_btnOpenFile);
 
 		_btnSaveOutput = new JButton("Save Output");
@@ -144,7 +156,7 @@ public class FileAnalyzerView extends JFrame {
 
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
 
-		_textArea = new JTextArea("Sample Text");
+		_textArea = new JTextArea("Upload a file to analyze it!");
 		_textArea.setLineWrap(true);
 		_textArea.setEditable(false);
 
@@ -197,6 +209,10 @@ public class FileAnalyzerView extends JFrame {
 
 	public JPanel getBottomPanel() {
 		return _bottomPanel;
+	}
+	
+	public JLabel getFileLabel() {
+		return _labelFileName;
 	}
 
 	public void setController(FileAnalyzerController controller) {
