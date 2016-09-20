@@ -16,7 +16,7 @@ public class FileAnalyzerController {
 
 	private File _file;
 	private FileAnalyzerView _view;
-	private String _outputString = "";
+	private String _outputString = ""; // Jervin Cruz
 
 	public FileAnalyzerController(FileAnalyzerView view) {
 		_view = view;
