@@ -1,5 +1,8 @@
 package file_analyzer;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import javax.swing.JFileChooser;
 
 public class FileAnalyzerController {
@@ -62,6 +66,8 @@ public class FileAnalyzerController {
 	}
 
 	public void copyClipboard() {
-
+		StringSelection strSelec = new StringSelection(_outputString);
+		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clpbrd.setContents(strSelec, null);
 	}
 }
