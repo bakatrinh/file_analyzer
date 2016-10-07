@@ -88,8 +88,7 @@ public class FileAnalyzerController {
 			sb2.append(new Character((char)charCode).toString());
 		}
 		String stringWithNonAscii = sb2.toString();
-		//String stringWithOnlyAscii = stringWithNonAscii.replaceAll("\\P{InBasic_Latin}", "");
-		String stringWithOnlyAscii = stringWithNonAscii.replaceAll("[^\\x00-\\x7F]", "");
+		String stringWithOnlyAscii = stringWithNonAscii.replaceAll("\\P{InBasic_Latin}", "");
 		return stringWithOnlyAscii.split("(?!^)");
 	}
 	

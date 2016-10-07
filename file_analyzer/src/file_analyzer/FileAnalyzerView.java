@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -161,7 +162,12 @@ public class FileAnalyzerView extends JFrame {
 		_btnOpenFile = new JButton("Open File");
 		_btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				_controller.openFile(_openFileChooser);
+				try {
+					_controller.openFile(_openFileChooser);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
