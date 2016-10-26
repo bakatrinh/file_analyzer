@@ -11,6 +11,10 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
 
@@ -41,6 +45,9 @@ public class FileAnalyzerController {
 			_outputString = convertToBinary();
 			_asciiArray = binaryToAscii(_outputString);
 			_outputString = asciiArrayToString(_asciiArray);
+			// --jervin's-- call function here, set text, append line separation
+			_outputString = cipherString(_asciiArray);
+			_view.getTextArea().setText("\n-----------------\n");
 			_view.getTextArea().setText(_outputString);
 		}
 
@@ -100,6 +107,123 @@ public class FileAnalyzerController {
 		}
 		return sb.toString();
 	}
+	
+	// Jervin
+	private String cipherString(String [] symbolsArr){
+		HashMap<String, Integer> symbolsRatio = new HashMap<>();
+		String cipher = "";
+		int counter = 0;
+
+		// Get number of occurrences per character and hash them
+		for (int i = 0; i < symbolsArr.length; i++){
+			if(symbolsRatio.containsKey(symbolsArr[i])){
+				counter = symbolsRatio.get(symbolsArr[i]);
+				symbolsRatio.put(symbolsArr[i], ++counter);
+			}
+			else{
+				symbolsRatio.put(symbolsArr[i],1);
+			}
+		}
+		
+		// Print whole string
+		for(int i = 0; i < symbolsArr.length; i++){
+			cipher += symbolsArr[i];
+		}
+		System.out.println(cipher);
+		
+		for(String s : symbolsRatio.keySet()){
+			System.out.println(s + symbolsRatio.get(s));
+		}
+		
+		Set<Integer> ss = new TreeSet<>();
+		
+		int k = 0;
+		// Store number per symbol in each array
+		for(String s : symbolsRatio.keySet()){
+			ss.add(symbolsRatio.get(s));
+		}	
+		
+		int [] symbolValues = new int[ss.size()];
+		for(Integer s : ss){
+			symbolValues[k++] = s;
+		}
+		
+		// Sort values by greatest to lowest occurrence to be converted to character later
+		quickSort(symbolValues, 0, symbolValues.length - 1);
+		
+		// Get key of value in sorted array, print out values
+		for(int i = 0; i < symbolValues.length; i++){
+			System.out.print(symbolValues[i] + " ");
+		}
+		// Replace the bottom half values with one letter, get key between second half of array
+		// Iterate through whole hashmap to see which symbols match with their values
+		
+		cipher = "";
+		// Get first half of majority values, append "majority letters" to returned string
+		for(int i = 0; i < symbolValues.length/2; i++){
+			for(String s : symbolsRatio.keySet()){
+				int count = symbolValues[i];
+				if(symbolsRatio.get(s).equals(symbolValues[i])){
+					while(count != 0){
+					cipher += s;
+					count--;
+					}
+				}
+			}
+		}
+		// Replace second half with one value, append to returned string
+		Random rand = null;
+		String chosenSymbol = "";
+		System.out.println(cipher);
+		for(int i = symbolValues.length/2; i < symbolsRatio.size(); i++){
+			for(String s : symbolsRatio.keySet()){
+				if(symbolsRatio.get(s).equals(symbolValues[rand.nextInt(symbolValues.length - symbolValues.length/2)])){
+					chosenSymbol = s;
+				}
+			}
+			cipher += chosenSymbol;
+		}
+		
+		System.out.println(cipher);
+		return cipher;
+	}
+	
+	static void quickSort(int [] arr, int low, int high){
+		if(arr == null || arr.length == 0)
+			return;
+		if(low >= high)
+			return;
+		
+		int middle = low + (high - low) / 2;
+		int pivot = arr[middle];
+		
+		int i = low;
+		int j = high;
+		
+		while (i <= j){
+			while(arr[i] > pivot){
+				i++;
+			}
+			while(arr[j] < pivot){
+				j--;
+			}
+			
+			if(i <= j){
+				int temp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = temp;
+				i++;
+				j--;
+			}
+		}
+		// Sort from greatest to least
+		if(low < j)
+			quickSort(arr, low, j);
+		if(high > i)
+			quickSort(arr, i, high);
+	}
+		
+	
 
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
 		int returnVal = fileChooser.showSaveDialog(_view);
