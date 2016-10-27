@@ -11,18 +11,13 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.swing.JFileChooser;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class FileAnalyzerController {
 
@@ -48,37 +43,69 @@ public class FileAnalyzerController {
 
 			_view.getFileLabel().setText(_file.getName());
 
-<<<<<<< Updated upstream
-			_outputString = convertToBinary();
-			_asciiArray = binaryToAscii(_outputString);
-			_outputString = asciiArrayToString(_asciiArray);
-			// --jervin's-- call function here, set text, append line separation
-			_outputString = cipherString(_asciiArray);
-			_view.getTextArea().setText("\n-----------------\n");
-=======
 			String tempString = convertToBinary(_file);
 			_asciiArray = binaryToAscii(tempString);
-			//_convArr = arrToRandom(_asciiArray);
-			//_outputString = asciiArrayToString(_convArr);
+			_asciiArray = removeWhiteSpace(_asciiArray);
+
 			tempString = asciiArrayToString(_asciiArray);
 			tempString = "File to Ascii:" + lineSplit() + "\n" + tempString;
 			tempString = tempString + lineSplit();
-			
+
+			String tempString2 = cipherString(_asciiArray);
+			_asciiArray = stringToArray(tempString2);
+			tempString = tempString + "\nReplaced all uncommon ascii characters with one character:" + lineSplit() + "\n" + tempString2 + lineSplit();
+
 			HashMap<String, String> randomAsciiHashMap = randomAsciiHashMap();
-			
-			tempString = tempString + "\nOur Randomized Ascii Hashmap:" + lineSplit() + hashMapToStringArray(randomAsciiHashMap) + lineSplit();
-			
+			tempString = tempString + "\nOur Randomized Ascii Hashmap:" + lineSplit() + "\n" + hashMapToStringArray(randomAsciiHashMap) + lineSplit();
+
 			_asciiArray = arrToRandom(randomAsciiHashMap, _asciiArray);
 			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + asciiArrayToString(_asciiArray) + lineSplit();
 			_outputString = tempString;
->>>>>>> Stashed changes
 			_view.getTextArea().setText(_outputString);
 		}
 
 	}
-	
-	public String lineSplit() {
+
+	private String lineSplit() {
 		return "\n=============================================================";
+	}
+
+	private String[] removeWhiteSpace(String[] stringArr) {
+		ArrayList<String> tempStringArrayList = new ArrayList<>();
+		String valD;
+		for (int i = 0; i < stringArr.length; i ++) {
+			char tempString = stringArr[i].charAt(0);
+
+			if (Character.isWhitespace(tempString))
+				switch (tempString) {
+				case '\t':
+					valD = "\t";
+					break;
+				case ' ':
+					valD = " ";
+					break;
+				case '\n':
+					valD = "\n";
+					break;
+				case '\r':
+					valD = "\r";
+					break;
+				case '\f':
+					valD = "\f";
+					break;
+				default:
+					valD = " ";
+					break;
+				} else if (Character.isISOControl(tempString)) {
+					valD = "";
+				} else {
+					valD = Character.toString(tempString);
+				}
+			tempStringArrayList.add(valD);
+		}
+		String returnArray[] = new String[tempStringArrayList.size()];
+		returnArray = tempStringArrayList.toArray(returnArray);
+		return returnArray;
 	}
 
 	private String convertToBinary(File file) throws IOException {
@@ -125,20 +152,34 @@ public class FileAnalyzerController {
 		String stringWithNonAscii = sb2.toString();
 		//String stringWithOnlyAscii = stringWithNonAscii.replaceAll("\\P{InBasic_Latin}", "");
 		String stringWithOnlyAscii = stringWithNonAscii.replaceAll("[^\\x00-\\x7F]", "");
-		return stringWithOnlyAscii.split("(?!^)");
+		return stringToArray(stringWithOnlyAscii);
 	}
-	
+
 	private String asciiArrayToString(String[] asciiArray) {
 		StringBuilder sb = new StringBuilder();
 		for (String e : asciiArray) {
-		    sb.append(e);
+			sb.append(e);
 		}
 		return sb.toString();
 	}
-	
-<<<<<<< Updated upstream
+
+	private String hashMapToStringArray(HashMap<String, String> randomAsciiHashMap) {
+		StringBuilder sb = new StringBuilder();
+		Set<String> keySet = randomAsciiHashMap.keySet();
+		Iterator<String> keySetIterator = keySet.iterator();
+		while (keySetIterator.hasNext()) {
+			String key = keySetIterator.next();
+			key = key + " = " + randomAsciiHashMap.get(key);
+			if (keySetIterator.hasNext()) {
+				key = key + "\n";
+			}
+			sb.append(key);
+		}
+		return sb.toString();
+	}
+
 	// Jervin
-	private String cipherString(String [] symbolsArr){
+	private String cipherString(String [] symbolsArr) {
 		HashMap<String, Integer> symbolsRatio = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
@@ -153,40 +194,40 @@ public class FileAnalyzerController {
 				symbolsRatio.put(symbolsArr[i],1);
 			}
 		}
-		
+
 		// Print whole string
 		for(int i = 0; i < symbolsArr.length; i++){
 			cipher += symbolsArr[i];
 		}
 		System.out.println(cipher);
-		
+
 		for(String s : symbolsRatio.keySet()){
 			System.out.println(s + symbolsRatio.get(s));
 		}
-		
+
 		Set<Integer> ss = new TreeSet<>();
-		
+
 		int k = 0;
 		// Store number per symbol in each array
 		for(String s : symbolsRatio.keySet()){
 			ss.add(symbolsRatio.get(s));
 		}	
-		
+
 		int [] symbolValues = new int[ss.size()];
 		for(Integer s : ss){
 			symbolValues[k++] = s;
 		}
-		
+
 		// Sort values by greatest to lowest occurrence to be converted to character later
 		quickSort(symbolValues, 0, symbolValues.length - 1);
-		
+
 		// Get key of value in sorted array, print out values
 		for(int i = 0; i < symbolValues.length; i++){
 			System.out.print(symbolValues[i] + " ");
 		}
 		// Replace the bottom half values with one letter, get key between second half of array
 		// Iterate through whole hashmap to see which symbols match with their values
-		
+
 		cipher = "";
 		// Get first half of majority values, append "majority letters" to returned string
 		for(int i = 0; i < symbolValues.length/2; i++){
@@ -194,41 +235,43 @@ public class FileAnalyzerController {
 				int count = symbolValues[i];
 				if(symbolsRatio.get(s).equals(symbolValues[i])){
 					while(count != 0){
-					cipher += s;
-					count--;
+						cipher += s;
+						count--;
 					}
 				}
 			}
 		}
 		// Replace second half with one value, append to returned string
-		Random rand = null;
+		Random rand = new Random();
+		int randomIndex = rand.nextInt(symbolValues.length - symbolValues.length/2);
 		String chosenSymbol = "";
+		System.out.println("\nRandom Index = " + randomIndex + "\n");
 		System.out.println(cipher);
 		for(int i = symbolValues.length/2; i < symbolsRatio.size(); i++){
 			for(String s : symbolsRatio.keySet()){
-				if(symbolsRatio.get(s).equals(symbolValues[rand.nextInt(symbolValues.length - symbolValues.length/2)])){
+				if(symbolsRatio.get(s).equals(symbolValues[randomIndex])){
 					chosenSymbol = s;
 				}
 			}
 			cipher += chosenSymbol;
 		}
-		
+
 		System.out.println(cipher);
 		return cipher;
 	}
-	
+
 	static void quickSort(int [] arr, int low, int high){
 		if(arr == null || arr.length == 0)
 			return;
 		if(low >= high)
 			return;
-		
+
 		int middle = low + (high - low) / 2;
 		int pivot = arr[middle];
-		
+
 		int i = low;
 		int j = high;
-		
+
 		while (i <= j){
 			while(arr[i] > pivot){
 				i++;
@@ -236,7 +279,7 @@ public class FileAnalyzerController {
 			while(arr[j] < pivot){
 				j--;
 			}
-			
+
 			if(i <= j){
 				int temp = arr[i];
 				arr[i] = arr[j];
@@ -251,24 +294,7 @@ public class FileAnalyzerController {
 		if(high > i)
 			quickSort(arr, i, high);
 	}
-		
-	
-=======
-	private String hashMapToStringArray(HashMap<String, String> randomAsciiHashMap) {
-		StringBuilder sb = new StringBuilder();
-		Set<String> keySet = randomAsciiHashMap.keySet();
-		Iterator<String> keySetIterator = keySet.iterator();
-		while (keySetIterator.hasNext()) {
-		   String key = keySetIterator.next();
-		   key = key + " = " + randomAsciiHashMap.get(key);
-		   if (keySetIterator.hasNext()) {
-			   key = key + "\n";
-		   }
-		   sb.append(key);
-		}
-		return sb.toString();
-	}
-	
+
 	private String[] arrToRandom(HashMap<String, String> randomAsciiHashMap, String[] outputArr) {
 		StringBuilder sb = new StringBuilder();
 		String key;
@@ -281,9 +307,13 @@ public class FileAnalyzerController {
 			}
 		}
 		String tempString = sb.toString();
+		return stringToArray(tempString);
+	}
+
+	private String[] stringToArray(String tempString) {
 		return tempString.split("(?!^)");
 	}
-	
+
 	private HashMap<String, String> randomAsciiHashMap() {
 		HashMap<String, String> hMap = new HashMap<String, String>();
 		ArrayList<Integer> exclude = new ArrayList<Integer>();
@@ -291,49 +321,48 @@ public class FileAnalyzerController {
 		exclude.add(0);
 		for (int i = 32; i < 127; i++) {
 			int q = 0;
-			
+
 			while (exclude.contains(q)) {
 				q = r.nextInt(126) + 33;
 			}
-			
+
 			exclude.add(q);
-			
+
 			char c = (char) i;
 			char d = (char) q;
-			
+
 			String valD = "";
-			
+
 			if (Character.isWhitespace(d))
 				switch (d) {
 				case '\t':
 					valD = "\\t";
-				    break;
+					break;
 				case ' ':
 					valD = " ";
-				    break;
+					break;
 				case '\n':
 					valD = "\\n";
-				    break;
+					break;
 				case '\r':
 					valD = "\\r";
-				    break;
+					break;
 				case '\f':
 					valD = "\\f";
-				    break;
+					break;
 				default:
 					valD = " ";
-				    break;
+					break;
 				} else if (Character.isISOControl(d)) {
 					valD = "";
-				    } else {
-				    	valD = Character.toString(d);
+				} else {
+					valD = Character.toString(d);
 				}
-			
-				hMap.put(Character.toString(c), valD);
+
+			hMap.put(Character.toString(c), valD);
 		}
 		return hMap;
 	}
->>>>>>> Stashed changes
 
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
 		int returnVal = fileChooser.showSaveDialog(_view);
