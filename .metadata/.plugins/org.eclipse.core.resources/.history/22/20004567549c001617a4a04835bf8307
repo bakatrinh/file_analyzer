@@ -45,7 +45,7 @@ public class FileAnalyzerController {
 
 			String tempString = convertToBinary(_file);
 			_asciiArray = binaryToAscii(tempString);
-			//_asciiArray = removeWhiteSpace(_asciiArray);
+			_asciiArray = removeWhiteSpace(_asciiArray);
 
 			tempString = asciiArrayToString(_asciiArray);
 			tempString = "File to Ascii:" + lineSplit() + "\n" + tempString;
