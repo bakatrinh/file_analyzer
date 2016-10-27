@@ -59,8 +59,8 @@ public class FileAnalyzerController {
 
 			_asciiArray = arrToRandom(randomAsciiHashMap, _asciiArray);
 			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + asciiArrayToString(_asciiArray) + lineSplit();
+			tempString = tempString + "\n" + _view.matrixSize();
 			_outputString = tempString;
-			
 			_view.getTextArea().setText(_outputString);
 		}
 

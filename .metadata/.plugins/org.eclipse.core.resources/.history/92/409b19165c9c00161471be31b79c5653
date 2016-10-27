@@ -256,10 +256,6 @@ public class FileAnalyzerView extends JFrame {
 		getContentPane().add(_mainCenterScreen, BorderLayout.CENTER);
 		getContentPane().add(_bottomPanel, BorderLayout.SOUTH);
 	}
-	
-	public int matrixSize() {
-		return (int) _jSpinner.getValue();
-	}
 
 	public JFileChooser getFileChooser() {
 		return _openFileChooser;

@@ -26,8 +26,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -177,8 +175,6 @@ public class FileAnalyzerView extends JFrame {
 			}
 		});
 		
-		SpinnerModel model = new SpinnerNumberModel(30, 1, 255, 1);
-		_jSpinner = new JSpinner(model);
 		JFormattedTextField txt = ((JSpinner.NumberEditor) _jSpinner.getEditor()).getTextField();
 		((NumberFormatter) txt.getFormatter()).setAllowsInvalid(false);
 		
@@ -255,10 +251,6 @@ public class FileAnalyzerView extends JFrame {
 
 		getContentPane().add(_mainCenterScreen, BorderLayout.CENTER);
 		getContentPane().add(_bottomPanel, BorderLayout.SOUTH);
-	}
-	
-	public int matrixSize() {
-		return (int) _jSpinner.getValue();
 	}
 
 	public JFileChooser getFileChooser() {

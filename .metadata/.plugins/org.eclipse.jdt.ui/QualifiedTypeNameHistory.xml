@@ -2,4 +2,9 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="java.util.Random"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="javax.swing.JFormattedTextField"/>
+<fullyQualifiedTypeName name="javax.swing.JSpinner"/>
+<fullyQualifiedTypeName name="javax.swing.text.NumberFormatter"/>
+<fullyQualifiedTypeName name="javax.swing.SpinnerModel"/>
+<fullyQualifiedTypeName name="javax.swing.SpinnerNumberModel"/>
 </qualifiedTypeNameHistroy>
