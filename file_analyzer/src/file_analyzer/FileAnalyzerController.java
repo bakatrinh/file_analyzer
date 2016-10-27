@@ -18,6 +18,12 @@ import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
+
 public class FileAnalyzerController {
 
 	private File _file;
@@ -42,19 +48,41 @@ public class FileAnalyzerController {
 
 			_view.getFileLabel().setText(_file.getName());
 
+<<<<<<< Updated upstream
 			_outputString = convertToBinary();
 			_asciiArray = binaryToAscii(_outputString);
 			_outputString = asciiArrayToString(_asciiArray);
 			// --jervin's-- call function here, set text, append line separation
 			_outputString = cipherString(_asciiArray);
 			_view.getTextArea().setText("\n-----------------\n");
+=======
+			String tempString = convertToBinary(_file);
+			_asciiArray = binaryToAscii(tempString);
+			//_convArr = arrToRandom(_asciiArray);
+			//_outputString = asciiArrayToString(_convArr);
+			tempString = asciiArrayToString(_asciiArray);
+			tempString = "File to Ascii:" + lineSplit() + "\n" + tempString;
+			tempString = tempString + lineSplit();
+			
+			HashMap<String, String> randomAsciiHashMap = randomAsciiHashMap();
+			
+			tempString = tempString + "\nOur Randomized Ascii Hashmap:" + lineSplit() + hashMapToStringArray(randomAsciiHashMap) + lineSplit();
+			
+			_asciiArray = arrToRandom(randomAsciiHashMap, _asciiArray);
+			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + asciiArrayToString(_asciiArray) + lineSplit();
+			_outputString = tempString;
+>>>>>>> Stashed changes
 			_view.getTextArea().setText(_outputString);
 		}
 
 	}
+	
+	public String lineSplit() {
+		return "\n=============================================================";
+	}
 
-	private String convertToBinary() throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(_file.getAbsolutePath()));
+	private String convertToBinary(File file) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
 		String tempString = new String(encoded, Charset.defaultCharset());
 
 		byte[] bytes = tempString.getBytes();
@@ -108,6 +136,7 @@ public class FileAnalyzerController {
 		return sb.toString();
 	}
 	
+<<<<<<< Updated upstream
 	// Jervin
 	private String cipherString(String [] symbolsArr){
 		HashMap<String, Integer> symbolsRatio = new HashMap<>();
@@ -224,6 +253,87 @@ public class FileAnalyzerController {
 	}
 		
 	
+=======
+	private String hashMapToStringArray(HashMap<String, String> randomAsciiHashMap) {
+		StringBuilder sb = new StringBuilder();
+		Set<String> keySet = randomAsciiHashMap.keySet();
+		Iterator<String> keySetIterator = keySet.iterator();
+		while (keySetIterator.hasNext()) {
+		   String key = keySetIterator.next();
+		   key = key + " = " + randomAsciiHashMap.get(key);
+		   if (keySetIterator.hasNext()) {
+			   key = key + "\n";
+		   }
+		   sb.append(key);
+		}
+		return sb.toString();
+	}
+	
+	private String[] arrToRandom(HashMap<String, String> randomAsciiHashMap, String[] outputArr) {
+		StringBuilder sb = new StringBuilder();
+		String key;
+		for (int i = 0; i < outputArr.length; i++) {
+			if (!outputArr[i].matches("\\s")) {
+				key = randomAsciiHashMap.get(outputArr[i]);
+				if (key != null) {
+					sb.append(key);
+				}
+			}
+		}
+		String tempString = sb.toString();
+		return tempString.split("(?!^)");
+	}
+	
+	private HashMap<String, String> randomAsciiHashMap() {
+		HashMap<String, String> hMap = new HashMap<String, String>();
+		ArrayList<Integer> exclude = new ArrayList<Integer>();
+		Random r = new Random();
+		exclude.add(0);
+		for (int i = 32; i < 127; i++) {
+			int q = 0;
+			
+			while (exclude.contains(q)) {
+				q = r.nextInt(126) + 33;
+			}
+			
+			exclude.add(q);
+			
+			char c = (char) i;
+			char d = (char) q;
+			
+			String valD = "";
+			
+			if (Character.isWhitespace(d))
+				switch (d) {
+				case '\t':
+					valD = "\\t";
+				    break;
+				case ' ':
+					valD = " ";
+				    break;
+				case '\n':
+					valD = "\\n";
+				    break;
+				case '\r':
+					valD = "\\r";
+				    break;
+				case '\f':
+					valD = "\\f";
+				    break;
+				default:
+					valD = " ";
+				    break;
+				} else if (Character.isISOControl(d)) {
+					valD = "";
+				    } else {
+				    	valD = Character.toString(d);
+				}
+			
+				hMap.put(Character.toString(c), valD);
+		}
+		return hMap;
+	}
+>>>>>>> Stashed changes
 
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
 		int returnVal = fileChooser.showSaveDialog(_view);

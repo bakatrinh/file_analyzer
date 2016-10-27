@@ -1715,6 +1715,7 @@ java.lang.ClassNotFoundException: org.eclipse.ui.internal.ide.application.addons
 
 !ENTRY org.eclipse.core.net 1 0 2016-10-07 17:37:20.810
 !MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+<<<<<<< Updated upstream
 
 !ENTRY org.eclipse.jface 4 0 2016-10-07 17:37:22.013
 !MESSAGE /icons/full/eview16/package.png
@@ -2050,6 +2051,9 @@ java.io.FileNotFoundException: /icons/full/eview16/source.png
 	at org.eclipse.core.internal.events.AutoBuildJob.run(AutoBuildJob.java:235)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
 !SESSION 2016-10-06 18:36:11.239 -----------------------------------------------
+=======
+!SESSION 2016-10-26 13:38:45.477 -----------------------------------------------
+>>>>>>> Stashed changes
 eclipse.buildId=4.6.0.I20160606-1100
 java.version=1.8.0_60
 java.vendor=Oracle Corporation
@@ -2057,6 +2061,7 @@ BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_US
 Framework arguments:  -product org.eclipse.epp.package.java.product -keyring /Users/trinhnguyen/.eclipse_keyring
 Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.java.product -keyring /Users/trinhnguyen/.eclipse_keyring
 
+<<<<<<< Updated upstream
 !ENTRY org.eclipse.core.net 1 0 2016-10-06 18:36:18.390
 !MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
 =======
@@ -6253,3 +6258,7 @@ java.io.FileNotFoundException: /icons/full/eview16/source.png
 	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:648)
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:603)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1465)
+=======
+!ENTRY org.eclipse.core.net 1 0 2016-10-26 13:39:01.944
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+>>>>>>> Stashed changes
