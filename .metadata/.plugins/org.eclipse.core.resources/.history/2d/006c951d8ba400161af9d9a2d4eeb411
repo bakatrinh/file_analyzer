@@ -11,15 +11,12 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.swing.JFileChooser;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 public class FileAnalyzerController {
@@ -53,7 +50,7 @@ public class FileAnalyzerController {
 			tempString = "File to Ascii:" + lineSplit() + "\n" + tempString;
 			tempString = tempString + lineSplit();
 
-			String tempString2 = cipherString(_asciiArray, _view.matrixSize());
+			String tempString2 = cipherString(_asciiArray);
 			_asciiArray = stringToArray(tempString2);
 			tempString = tempString + "\nReplaced all uncommon ascii characters with one character:" + lineSplit() + "\n" + tempString2 + lineSplit();
 
@@ -182,12 +179,12 @@ public class FileAnalyzerController {
 	}
 
 	// Jervin
-	static String cipherString(String [] symbolsArr, int symbolValuesLength){
+	private String cipherString(String [] symbolsArr) {
 		HashMap<String, Integer> symbolsRatio = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
 
-		// Keep track of number of symbols
+		// Get number of occurrences per character and hash them
 		for (int i = 0; i < symbolsArr.length; i++){
 			if(symbolsRatio.containsKey(symbolsArr[i])){
 				counter = symbolsRatio.get(symbolsArr[i]);
@@ -197,85 +194,68 @@ public class FileAnalyzerController {
 				symbolsRatio.put(symbolsArr[i],1);
 			}
 		}
-		
+
 		// Print whole string
 		for(int i = 0; i < symbolsArr.length; i++){
 			cipher += symbolsArr[i];
 		}
 		System.out.println(cipher);
-		
+
 		for(String s : symbolsRatio.keySet()){
 			System.out.println(s + symbolsRatio.get(s));
 		}
-		
+
 		Set<Integer> ss = new TreeSet<>();
-		
+
 		int k = 0;
 		// Store number per symbol in each array
 		for(String s : symbolsRatio.keySet()){
 			ss.add(symbolsRatio.get(s));
 		}	
-		
+
 		int [] symbolValues = new int[ss.size()];
 		for(Integer s : ss){
 			symbolValues[k++] = s;
 		}
-		
-		// Sort
+
+		// Sort values by greatest to lowest occurrence to be converted to character later
 		quickSort(symbolValues, 0, symbolValues.length - 1);
-		
+
 		// Get key of value in sorted array, print out values
 		for(int i = 0; i < symbolValues.length; i++){
 			System.out.print(symbolValues[i] + " ");
 		}
-		
-		// Replace uncommon values with a randomized uncommon symbol starting from the cutoff point
+		// Replace the bottom half values with one letter, get key between second half of array
+		// Iterate through whole hashmap to see which symbols match with their values
+
 		cipher = "";
-		int cutoff = 0;
-		Stack uniqueSymbols = new Stack();
-		
-		for(String key : symbolsRatio.keySet()){
-			if(cutoff == symbolValuesLength)
-				break;
-			else{
-			uniqueSymbols.push(key);
-			cutoff++;
-			}
-		}
-		System.out.print(uniqueSymbols);
-		
-		// Get a random symbol from the cutoff [set of uncommon symbols]
-		Random rand = new Random();
-		int uncommonCounter = 0;
-		int randomUncommon = 0;
-		String [] uncommons = new String[symbolsRatio.size() - symbolValuesLength];
-		int j = 0;
-		String chosenUncommon = "";
-		System.out.print("\nCounter: ");
+		// Get first half of majority values, append "majority letters" to returned string
+		for(int i = 0; i < symbolValues.length/2; i++){
 			for(String s : symbolsRatio.keySet()){
-				uncommonCounter++;
-				if(uncommonCounter > symbolValuesLength){
-					uncommons[j] = s;
-					System.out.print(uncommons[j]);
-					j++;
+				int count = symbolValues[i];
+				if(symbolsRatio.get(s).equals(symbolValues[i])){
+					while(count != 0){
+						cipher += s;
+						count--;
+					}
 				}
 			}
-		randomUncommon = rand.nextInt(uncommons.length);
-		chosenUncommon = uncommons[randomUncommon];
-
-		System.out.println("Chosen Uncommon: " + chosenUncommon);
-		// Iterate through original string array; if most occurring symbol not in array, replace
-		String cipheredString = "";
-		for(int i = 0; i < symbolsArr.length; i++){
-			if(!uniqueSymbols.contains(symbolsArr[i])){
-				symbolsArr[i] = chosenUncommon;
-				cipher+=symbolsArr[i];
-			}
-			else{
-				cipher+= symbolsArr[i];
-			}
 		}
-		
+		// Replace second half with one value, append to returned string
+		Random rand = new Random();
+		int randomIndex = rand.nextInt(symbolValues.length - symbolValues.length/2);
+		String chosenSymbol = "";
+		System.out.println("\nRandom Index = " + randomIndex + "\n");
+		System.out.println(cipher);
+		for(int i = symbolValues.length/2; i < symbolsRatio.size(); i++){
+			for(String s : symbolsRatio.keySet()){
+				if(symbolsRatio.get(s).equals(symbolValues[randomIndex])){
+					chosenSymbol = s;
+				}
+			}
+			cipher += chosenSymbol;
+		}
+
 		System.out.println(cipher);
 		return cipher;
 	}
