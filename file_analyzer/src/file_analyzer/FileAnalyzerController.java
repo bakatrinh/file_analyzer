@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import javax.swing.JFileChooser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -28,6 +29,8 @@ public class FileAnalyzerController {
 	private FileAnalyzerView _view;
 	private String[] _asciiArray;
 	private String _outputString = "";
+	private String _uncommonCharacter = "";
+	private String _uncommonTitle = "";
 
 	public FileAnalyzerController(FileAnalyzerView view) {
 		_view = view;
@@ -48,14 +51,14 @@ public class FileAnalyzerController {
 
 			String tempString = convertToBinary(_file);
 			_asciiArray = binaryToAscii(tempString);
-			//_asciiArray = removeWhiteSpace(_asciiArray);
+			_asciiArray = removeWhiteSpace(_asciiArray);
 			tempString = asciiArrayToString(_asciiArray);
 			tempString = "File to Ascii:" + lineSplit() + "\n" + tempString;
 			tempString = tempString + lineSplit();
 
 			String tempString2 = cipherString(_asciiArray, _view.matrixSize());
 			_asciiArray = stringToArray(tempString2);
-			tempString = tempString + "\nReplaced all uncommon ascii characters with one character:" + lineSplit() + "\n" + tempString2 + lineSplit();
+			tempString = tempString + "\nReplaced all uncommon ascii characters with one character:" + "\n" + _uncommonTitle + "\nReplaced with: " + _uncommonCharacter + lineSplit() + "\n" + tempString2 + lineSplit();
 
 			HashMap<String, String> randomAsciiHashMap = randomAsciiHashMap();
 			tempString = tempString + "\nOur Randomized Ascii Hashmap:" + lineSplit() + "\n" + hashMapToStringArray(randomAsciiHashMap) + lineSplit();
@@ -63,7 +66,7 @@ public class FileAnalyzerController {
 			_asciiArray = arrToRandom(randomAsciiHashMap, _asciiArray);
 			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + asciiArrayToString(_asciiArray) + lineSplit();
 			_outputString = tempString;
-			
+
 			_view.getTextArea().setText(_outputString);
 		}
 
@@ -103,8 +106,9 @@ public class FileAnalyzerController {
 					valD = "";
 				} else {
 					valD = Character.toString(tempString);
+					tempStringArrayList.add(valD);
 				}
-			tempStringArrayList.add(valD);
+			//tempStringArrayList.add(valD);
 		}
 		String returnArray[] = new String[tempStringArrayList.size()];
 		returnArray = tempStringArrayList.toArray(returnArray);
@@ -182,7 +186,7 @@ public class FileAnalyzerController {
 	}
 
 	// Jervin
-	static String cipherString(String [] symbolsArr, int uniqueCutoff){
+	private String cipherString(String [] symbolsArr, int uniqueCutoff){
 		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
@@ -197,86 +201,82 @@ public class FileAnalyzerController {
 				symbolsFrequency.put(symbolsArr[i],1);
 			}
 		}
-		
+
 		// Print whole string
 		for(int i = 0; i < symbolsArr.length; i++){
 			cipher += symbolsArr[i];
 		}
 		System.out.println(cipher);
-		
+
 		for(String s : symbolsFrequency.keySet()){
 			System.out.println("Symbol: " + s.toString() + " Frequency:" + symbolsFrequency.get(s));
 		}
-		
+
 		// Frequency
 		Set<Integer> ss = new TreeSet<>();
-		
+
 		int k = 0;
 		// Store Symbol Frequency
 		for(String s : symbolsFrequency.keySet()){
 			ss.add(symbolsFrequency.get(s));
 		}	
-		
+
 		int [] symbolValues = new int[ss.size()];
 		for(Integer s : ss){
 			symbolValues[k++] = s;
 		}
-		
+
 		// Sort
 		quickSort(symbolValues, 0, symbolValues.length - 1);
-		
+
 		// Get key of value in sorted array, print out values
 		for(int i = 0; i < symbolValues.length; i++){
 			System.out.print(symbolValues[i] + " ");
 		}
-		
+
 		// Replace uncommon values with a randomized uncommon symbol starting from the cutoff point
 		cipher = "";
 		int cutoff = 0;
 		Stack<String> uniqueSymbols = new Stack();
-		
+
 		for(String key : symbolsFrequency.keySet()){
-			
 			if(cutoff == uniqueCutoff)
 				break;
-			else if(key == "\t"){
-				uniqueSymbols.push("\\t");
-			}
-			else if(key == "\r"){
-				uniqueSymbols.push("\\r");
-			}
-			else if(key == " "){
-				uniqueSymbols.push("\\");
-			}
-			else if(key == "\\n"){
-				uniqueSymbols.push("");
-			}
 			else{
-			uniqueSymbols.push(key);
-			cutoff++;
+				uniqueSymbols.push(key);
+				cutoff++;
 			}
 		}
 		System.out.print("\nUnique Symbols: ");
 		System.out.print(uniqueSymbols);
-		
+
 		// Get a random symbol from the cutoff [set of uncommon symbols]
 		Random rand = new Random();
 		int uncommonCounter = 0;
 		int randomUncommon = 0;
-		String [] uncommons = new String[symbolsFrequency.size() - uniqueCutoff];
+		String [] uncommons;
+		if (symbolsFrequency.size() < uniqueCutoff) {
+			uncommons = new String[symbolsFrequency.size()];
+		}
+		else {
+			uncommons = new String[symbolsFrequency.size() - uniqueCutoff];
+		}
 		int j = 0;
 		String chosenUncommon = "";
+		_uncommonTitle = "Uncommons: ";
 		System.out.print("\nUncommons: ");
-			for(String s : symbolsFrequency.keySet()){
-				uncommonCounter++;
-				if(uncommonCounter > uniqueCutoff){
-					uncommons[j] = s;
-					System.out.print(uncommons[j]);
-					j++;
-				}
+		for(String s : symbolsFrequency.keySet()){
+			uncommonCounter++;
+			if(uncommonCounter > uniqueCutoff){
+				uncommons[j] = s;
+				System.out.print(uncommons[j]);
+				_uncommonTitle = _uncommonTitle + uncommons[j];
+				j++;
 			}
+		}
 		randomUncommon = rand.nextInt(uncommons.length);
 		chosenUncommon = uncommons[randomUncommon];
+		_uncommonCharacter = uncommons[randomUncommon];
 
 		System.out.println("Chosen Uncommon: " + chosenUncommon);
 		// Iterate through original string array; if most occurring symbol not in array, replace
@@ -289,7 +289,7 @@ public class FileAnalyzerController {
 				cipher+= symbolsArr[i];
 			}
 		}
-		
+
 		System.out.println(cipher);
 		return cipher;
 	}
@@ -350,50 +350,23 @@ public class FileAnalyzerController {
 
 	private HashMap<String, String> randomAsciiHashMap() {
 		HashMap<String, String> hMap = new HashMap<String, String>();
-		ArrayList<Integer> exclude = new ArrayList<Integer>();
-		Random r = new Random();
-		exclude.add(0);
+		ArrayList<String> randomAscii = new ArrayList<>();
+		ArrayList<String> nonRandom = new ArrayList<>();
 		for (int i = 32; i < 127; i++) {
-			int q = 0;
-
-			while (exclude.contains(q)) {
-				q = r.nextInt(126) + 33;
+			char x = (char) i;
+			if (!Character.isWhitespace(x)) {
+				nonRandom.add( Character.toString(x));
 			}
-
-			exclude.add(q);
-
-			char c = (char) i;
-			char d = (char) q;
-
-			String valD = "";
-
-			if (Character.isWhitespace(d))
-				switch (d) {
-				case '\t':
-					valD = "\\t";
-					break;
-				case ' ':
-					valD = " ";
-					break;
-				case '\n':
-					valD = "\\n";
-					break;
-				case '\r':
-					valD = "\\r";
-					break;
-				case '\f':
-					valD = "\\f";
-					break;
-				default:
-					valD = " ";
-					break;
-				} else if (Character.isISOControl(d)) {
-					valD = "";
-				} else {
-					valD = Character.toString(d);
-				}
-
-			hMap.put(Character.toString(c), valD);
+		}
+		for (int i = 32; i < 127; i++) {
+			char x = (char) i;
+			if (!Character.isWhitespace(x)) {
+				randomAscii.add( Character.toString(x));
+			}
+		}
+		Collections.shuffle(randomAscii);
+		for (int i = 0; i < nonRandom.size(); i ++) {
+			hMap.put(nonRandom.get(i), randomAscii.get(i));
 		}
 		return hMap;
 	}
