@@ -182,19 +182,19 @@ public class FileAnalyzerController {
 	}
 
 	// Jervin
-	static String cipherString(String [] symbolsArr, int symbolValuesLength){
-		HashMap<String, Integer> symbolsRatio = new HashMap<>();
+	static String cipherString(String [] symbolsArr, int uniqueCutoff){
+		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
 
 		// Keep track of number of symbols
 		for (int i = 0; i < symbolsArr.length; i++){
-			if(symbolsRatio.containsKey(symbolsArr[i])){
-				counter = symbolsRatio.get(symbolsArr[i]);
-				symbolsRatio.put(symbolsArr[i], ++counter);
+			if(symbolsFrequency.containsKey(symbolsArr[i])){
+				counter = symbolsFrequency.get(symbolsArr[i]);
+				symbolsFrequency.put(symbolsArr[i], ++counter);
 			}
 			else{
-				symbolsRatio.put(symbolsArr[i],1);
+				symbolsFrequency.put(symbolsArr[i],1);
 			}
 		}
 		
@@ -204,16 +204,17 @@ public class FileAnalyzerController {
 		}
 		System.out.println(cipher);
 		
-		for(String s : symbolsRatio.keySet()){
-			System.out.println(s + symbolsRatio.get(s));
+		for(String s : symbolsFrequency.keySet()){
+			System.out.println("Symbol: " + s.toString() + " Frequency:" + symbolsFrequency.get(s));
 		}
 		
+		// Frequency
 		Set<Integer> ss = new TreeSet<>();
 		
 		int k = 0;
-		// Store number per symbol in each array
-		for(String s : symbolsRatio.keySet()){
-			ss.add(symbolsRatio.get(s));
+		// Store Symbol Frequency
+		for(String s : symbolsFrequency.keySet()){
+			ss.add(symbolsFrequency.get(s));
 		}	
 		
 		int [] symbolValues = new int[ss.size()];
@@ -232,29 +233,43 @@ public class FileAnalyzerController {
 		// Replace uncommon values with a randomized uncommon symbol starting from the cutoff point
 		cipher = "";
 		int cutoff = 0;
-		Stack uniqueSymbols = new Stack();
+		Stack<String> uniqueSymbols = new Stack();
 		
-		for(String key : symbolsRatio.keySet()){
-			if(cutoff == symbolValuesLength)
+		for(String key : symbolsFrequency.keySet()){
+			
+			if(cutoff == uniqueCutoff)
 				break;
+			else if(key == "\t"){
+				uniqueSymbols.push("\\t");
+			}
+			else if(key == "\r"){
+				uniqueSymbols.push("\\r");
+			}
+			else if(key == " "){
+				uniqueSymbols.push("\\");
+			}
+			else if(key == "\\n"){
+				uniqueSymbols.push("");
+			}
 			else{
 			uniqueSymbols.push(key);
 			cutoff++;
 			}
 		}
+		System.out.print("\nUnique Symbols: ");
 		System.out.print(uniqueSymbols);
 		
 		// Get a random symbol from the cutoff [set of uncommon symbols]
 		Random rand = new Random();
 		int uncommonCounter = 0;
 		int randomUncommon = 0;
-		String [] uncommons = new String[symbolsRatio.size() - symbolValuesLength];
+		String [] uncommons = new String[symbolsFrequency.size() - uniqueCutoff];
 		int j = 0;
 		String chosenUncommon = "";
-		System.out.print("\nCounter: ");
-			for(String s : symbolsRatio.keySet()){
+		System.out.print("\nUncommons: ");
+			for(String s : symbolsFrequency.keySet()){
 				uncommonCounter++;
-				if(uncommonCounter > symbolValuesLength){
+				if(uncommonCounter > uniqueCutoff){
 					uncommons[j] = s;
 					System.out.print(uncommons[j]);
 					j++;
@@ -265,7 +280,6 @@ public class FileAnalyzerController {
 
 		System.out.println("Chosen Uncommon: " + chosenUncommon);
 		// Iterate through original string array; if most occurring symbol not in array, replace
-		String cipheredString = "";
 		for(int i = 0; i < symbolsArr.length; i++){
 			if(!uniqueSymbols.contains(symbolsArr[i])){
 				symbolsArr[i] = chosenUncommon;

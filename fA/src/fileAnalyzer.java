@@ -100,6 +100,7 @@ public class fileAnalyzer {
 			cutoff++;
 			}
 		}
+		System.out.print("\nUnique Symbols: ");
 		System.out.print(uniqueSymbols);
 		
 		// Get a random symbol from the cutoff [set of uncommon symbols]
