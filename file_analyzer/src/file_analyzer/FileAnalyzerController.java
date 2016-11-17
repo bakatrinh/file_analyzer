@@ -28,9 +28,11 @@ public class FileAnalyzerController {
 	private File _file;
 	private FileAnalyzerView _view;
 	private String[] _asciiArray;
+	private ArrayList<String> _uniqueCharacters;
 	private String _outputString = "";
 	private String _uncommonCharacter = "";
 	private String _uncommonTitle = "";
+	private ArrayList<ArrayList<FileAnalyzerStringPairs>> _stringPairs;
 
 	public FileAnalyzerController(FileAnalyzerView view) {
 		_view = view;
@@ -64,7 +66,15 @@ public class FileAnalyzerController {
 			tempString = tempString + "\nOur Randomized Ascii Hashmap:" + lineSplit() + "\n" + hashMapToStringArray(randomAsciiHashMap) + lineSplit();
 
 			_asciiArray = arrToRandom(randomAsciiHashMap, _asciiArray);
-			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + asciiArrayToString(_asciiArray) + lineSplit();
+			String finalasciiArrayString = asciiArrayToString(_asciiArray);
+			_uniqueCharacters = gatherUniqueCharacters(_asciiArray);
+			String[] myArray = _uniqueCharacters.toArray(new String[_uniqueCharacters.size()]);
+			_stringPairs = makeStringPairs(myArray, finalasciiArrayString);
+			String stringMatrix = printOutMatrix(_stringPairs);
+			tempString = tempString + "\nOur New Ascii String with replaced random values:" + lineSplit() + "\n" + finalasciiArrayString;
+			tempString = tempString + lineSplit();
+			tempString = tempString + "\nOur matrix of string pairs with its ocurrences count:" + lineSplit() + "\n";
+			tempString = tempString + stringMatrix;
 			_outputString = tempString;
 
 			_view.getTextArea().setText(_outputString);
@@ -131,6 +141,16 @@ public class FileAnalyzerController {
 		return binary.toString();
 	}
 
+	private ArrayList<String> gatherUniqueCharacters(String[] asciiArray) {
+		ArrayList<String> temp = new ArrayList<>();
+		for (int i = 0; i < asciiArray.length; i++) {
+			if (!temp.contains(asciiArray[i])) {
+				temp.add(asciiArray[i]);
+			}
+		}
+		return temp;
+	}
+
 	private String[] binaryToAscii(String s) {
 		int arrayLength = (int) Math.ceil(((s.length() / (double)8)));
 		String[] result = new String[arrayLength];
@@ -185,6 +205,57 @@ public class FileAnalyzerController {
 		return sb.toString();
 	}
 
+	private int countOcurrences(String fullString, String subString) {
+		int lastIndex = 0;
+		int count = 0;
+
+		while (lastIndex != -1) {
+
+			lastIndex = fullString.indexOf(subString,lastIndex);
+
+			if (lastIndex != -1) {
+				count ++;
+				lastIndex += subString.length();
+			}
+		}
+		return count;
+	}
+
+	private ArrayList<ArrayList<FileAnalyzerStringPairs>> makeStringPairs(String[] asciiArray, String fullString) {
+		ArrayList<ArrayList<FileAnalyzerStringPairs>> temp = new ArrayList<ArrayList<FileAnalyzerStringPairs>>();
+		for (int i = 0; i < asciiArray.length; i++) {
+			temp.add(new ArrayList<FileAnalyzerStringPairs>());
+		}
+		for (int i = 0; i < asciiArray.length; i++) {
+			ArrayList<FileAnalyzerStringPairs> currentLetter = temp.get(i);
+			for (int j = 0; j < asciiArray.length; j++) {
+				String tempPairString = asciiArray[i]+asciiArray[j];
+				FileAnalyzerStringPairs currentTempPair = new FileAnalyzerStringPairs(tempPairString, countOcurrences(fullString, tempPairString));
+				currentLetter.add(currentTempPair);
+				System.out.println(currentTempPair);
+			}
+		}
+		return temp;
+	}
+	
+	private String printOutMatrix(ArrayList<ArrayList<FileAnalyzerStringPairs>> stringPairsArray) {
+		String returnString = "";
+		boolean first = true;
+		for (int i = 0; i < stringPairsArray.size(); i++) {
+			if (!first) {
+				returnString = returnString + "\n";
+			}
+			ArrayList<FileAnalyzerStringPairs> ourPairArray = stringPairsArray.get(i);
+			for (int j = 0; j < ourPairArray.size(); j ++) {
+				returnString = returnString + ourPairArray.get(j);
+			}
+			if (first) {
+				first = false;
+			}
+		}
+		return returnString;
+	}
+
 	// Jervin
 	private String cipherString(String [] symbolsArr, int uniqueCutoff){
 		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
@@ -207,7 +278,6 @@ public class FileAnalyzerController {
 			cipher += symbolsArr[i];
 		}
 		System.out.println(cipher);
-
 		for(String s : symbolsFrequency.keySet()){
 			System.out.println("Symbol: " + s.toString() + " Frequency:" + symbolsFrequency.get(s));
 		}
