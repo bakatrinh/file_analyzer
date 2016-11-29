@@ -2,14 +2,18 @@ package file_analyzer;
 
 public class FileAnalyzerStringPairs {
 	private String _pair = "";
-	private int _sumOccurrences;
+	private double _sumOccurrences;
 	
-	public FileAnalyzerStringPairs(String pair, int sumOccurrences) {
+	public FileAnalyzerStringPairs(String pair, double sumOccurrences) {
 		_pair = pair;
 		_sumOccurrences = sumOccurrences;
 	}
 	
-	public int getSumOccurrences() {
+	public String getPair() {
+		return _pair;
+	}
+	
+	public double getSumOccurrences() {
 		return _sumOccurrences;
 	}
 	

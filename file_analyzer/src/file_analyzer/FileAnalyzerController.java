@@ -75,7 +75,14 @@ public class FileAnalyzerController {
 			tempString = tempString + lineSplit();
 			tempString = tempString + "\nOur matrix of string pairs with its ocurrences count:" + lineSplit() + "\n";
 			tempString = tempString + stringMatrix;
+			
+			_stringPairs = sumNDivide(_stringPairs);
+			tempString += lineSplit();
+			tempString = tempString + "\nOur matrix of string pairs with its occurrences count divided by the sum of the row:" + lineSplit() + "\n";
+			tempString = tempString + printOutMatrix(_stringPairs);
+			
 			_outputString = tempString;
+			
 
 			_view.getTextArea().setText(_outputString);
 		}
@@ -236,6 +243,25 @@ public class FileAnalyzerController {
 			}
 		}
 		return temp;
+	}
+	
+	private ArrayList<ArrayList<FileAnalyzerStringPairs>> sumNDivide(ArrayList<ArrayList<FileAnalyzerStringPairs>> stringPairsArray) {		
+		double sum = 0;
+		double div = 0;
+		
+		for (int i = 0; i < stringPairsArray.size(); i++) {
+			for (int j = 0; j < stringPairsArray.get(i).size(); j++) {
+				sum += stringPairsArray.get(i).get(j).getSumOccurrences();
+			}			
+			for (int k = 0; k < stringPairsArray.get(i).size(); k++) {
+				if (stringPairsArray.get(i).get(k).getSumOccurrences() != 0) div = stringPairsArray.get(i).get(k).getSumOccurrences() / sum;
+				else div = 0.0;
+				stringPairsArray.get(i).set(k, new FileAnalyzerStringPairs(stringPairsArray.get(i).get(k).getPair(), div));
+			}
+			sum = 0;
+		}
+		
+		return stringPairsArray;
 	}
 	
 	private String printOutMatrix(ArrayList<ArrayList<FileAnalyzerStringPairs>> stringPairsArray) {
