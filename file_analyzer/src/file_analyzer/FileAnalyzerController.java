@@ -16,6 +16,7 @@ import javax.swing.JFileChooser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -324,12 +325,17 @@ public class FileAnalyzerController {
 	}
 
 	// Jervin
+	/** cipherString function: Takes the file's converted ASCII characters and gets
+	 *  the user chosen cutoff number for most significant symbols. These symbols are 
+	 *  displayed, while every other symbol is replaced by a randomized, non common symbol
+	 **/
 	public String cipherString(String [] symbolsArr, int uniqueCutoff) {
 		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
 
 		// Keep track of number of symbols
+		// Assertion: Symbols frequency will be kept given that user chose a file containing symbols
 		for (int i = 0; i < symbolsArr.length; i++){
 			if(symbolsFrequency.containsKey(symbolsArr[i])){
 				counter = symbolsFrequency.get(symbolsArr[i]);
@@ -340,7 +346,7 @@ public class FileAnalyzerController {
 			}
 		}
 
-		// Print whole string
+		// All symbols in file are combined and shown as one string
 		for(int i = 0; i < symbolsArr.length; i++){
 			cipher += symbolsArr[i];
 		}
@@ -349,11 +355,9 @@ public class FileAnalyzerController {
 			System.out.println("Symbol: " + s.toString() + " Frequency:" + symbolsFrequency.get(s));
 		}
 
-		// Frequency
-		Set<Integer> ss = new TreeSet<>();
-
+		// Tracks Symbol Frequency
 		int k = 0;
-		// Store Symbol Frequency
+		Set<Integer> ss = new TreeSet<>();
 		for(String s : symbolsFrequency.keySet()){
 			ss.add(symbolsFrequency.get(s));
 		}	
@@ -363,31 +367,40 @@ public class FileAnalyzerController {
 			symbolValues[k++] = s;
 		}
 
-		// Sort
+		// Symbols are arranged from greatest to least with respect to frequency
+		// Assertion: Multiple symbols will have the same value, they are listed
+		// together without preference
 		quickSort(symbolValues, 0, symbolValues.length - 1);
 
-		// Get key of value in sorted array, print out values
+		// Shows each symbol's frequency
 		for(int i = 0; i < symbolValues.length; i++){
 			System.out.print(symbolValues[i] + " ");
 		}
 
-		// Replace uncommon values with a randomized uncommon symbol starting from the cutoff point
 		cipher = "";
 		int cutoff = 0;
 		Stack<String> uniqueSymbols = new Stack();
 
-		for(String key : symbolsFrequency.keySet()){
-			if(cutoff == uniqueCutoff)
-				break;
-			else{
-				uniqueSymbols.push(key);
-				cutoff++;
+		// Keeps track of most common symbols
+		// Assertion: User will choose significant symbol cutoff less than number of file symbols
+		try{
+			for(String key : symbolsFrequency.keySet()){
+				if(cutoff == uniqueCutoff)
+					break;
+				else{
+					uniqueSymbols.push(key);
+					cutoff++;
+				}
 			}
+		}
+		catch(Exception e){
+			System.out.println(e);
 		}
 		System.out.print("\nUnique Symbols: ");
 		System.out.print(uniqueSymbols);
 
-		// Get a random symbol from the cutoff [set of uncommon symbols]
+		// Get a random symbol from a set of uncommon symbols
+		// Assertion: User may have chosen cutoff greater than number of unique file symbols
 		Random rand = new Random();
 		int uncommonCounter = 0;
 		int randomUncommon = 0;
@@ -414,9 +427,10 @@ public class FileAnalyzerController {
 		randomUncommon = rand.nextInt(uncommons.length);
 		chosenUncommon = uncommons[randomUncommon];
 		_uncommonCharacter = uncommons[randomUncommon];
-
+		
 		System.out.println("Chosen Uncommon: " + chosenUncommon);
-		// Iterate through original string array; if most occurring symbol not in array, replace
+		
+		// Replace all the non-common symbols with the chosen uncommon symbol
 		for(int i = 0; i < symbolsArr.length; i++){
 			if(!uniqueSymbols.contains(symbolsArr[i])){
 				symbolsArr[i] = chosenUncommon;
@@ -430,7 +444,10 @@ public class FileAnalyzerController {
 		System.out.println(cipher);
 		return cipher;
 	}
-
+	
+	/**
+	 * quickSort: Maps the symbol frequency from greatest to least
+	 */
 	static void quickSort(int [] arr, int low, int high){
 		if(arr == null || arr.length == 0)
 			return;
@@ -459,7 +476,7 @@ public class FileAnalyzerController {
 				j--;
 			}
 		}
-		// Sort from greatest to least
+
 		if(low < j)
 			quickSort(arr, low, j);
 		if(high > i)
