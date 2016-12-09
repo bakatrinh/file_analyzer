@@ -324,9 +324,11 @@ public class FileAnalyzerController {
 		return returnString;
 	}
 
-	// cipherString function: Takes the file's converted ASCII characters and gets
-	// the user chosen cutoff number for most significant symbols. These symbols are 
-	// displayed, while every other symbol is replaced by a randomized, non common symbol
+	// Jervin
+	/** cipherString function: Takes the file's converted ASCII characters and gets
+	 *  the user chosen cutoff number for most significant symbols. These symbols are 
+	 *  displayed, while every other symbol is replaced by a randomized, non common symbol
+	 **/
 	public String cipherString(String [] symbolsArr, int uniqueCutoff) {
 		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
 		String cipher = "";
@@ -366,7 +368,7 @@ public class FileAnalyzerController {
 		}
 
 		// Symbols are arranged from greatest to least with respect to frequency
-		// Assertion: Multiple symbols will have the same frequency, they are listed
+		// Assertion: Multiple symbols will have the same value, they are listed
 		// together without preference
 		quickSort(symbolValues, 0, symbolValues.length - 1);
 
@@ -390,7 +392,7 @@ public class FileAnalyzerController {
 					cutoff++;
 				}
 			}
-		} 
+		}
 		catch(Exception e){
 			System.out.println(e);
 		}
@@ -443,8 +445,9 @@ public class FileAnalyzerController {
 		return cipher;
 	}
 	
-	
-	 // quickSort: Maps the symbol frequency from greatest to least
+	/**
+	 * quickSort: Maps the symbol frequency from greatest to least
+	 */
 	static void quickSort(int [] arr, int low, int high){
 		if(arr == null || arr.length == 0)
 			return;
