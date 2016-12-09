@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+// Our regular controller. See the fA package for testing and debug codes
 public class FileAnalyzerController {
 
 	private File _file;
@@ -42,8 +43,10 @@ public class FileAnalyzerController {
 	public File getFile() {
 		return _file;
 	}
-
-	public void openFile(JFileChooser fileChooser) throws IOException {
+	
+	// Opens the file then runs the various method of our algorithm and
+	// displays the result on the GUI
+	public void openFile(JFileChooser fileChooser) {
 		int returnVal = fileChooser.showOpenDialog(_view);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -88,11 +91,16 @@ public class FileAnalyzerController {
 		}
 
 	}
-
+	
+	// Used occasionally to add a separator on our GUI window to separate
+	// parts of the code
 	private String lineSplit() {
 		return "\n=============================================================";
 	}
-
+	
+	// Goes through a string array and remove any elements
+	// that happens to be a newline, space, other other
+	// invisible special characters. Then shifts the array up
 	private String[] removeWhiteSpace(String[] stringArr) {
 		ArrayList<String> tempStringArrayList = new ArrayList<>();
 		String valD;
@@ -131,9 +139,23 @@ public class FileAnalyzerController {
 		returnArray = tempStringArrayList.toArray(returnArray);
 		return returnArray;
 	}
-
-	private String convertToBinary(File file) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+	
+	// Reads in a file 8 bit at a time and convert it to 0 or 1.
+	// Appends these 0s and 1s to a string that gets returned in the
+	// end
+	private String convertToBinary(File file) {
+		byte[] encoded = null;
+		// Assertion. Makes sure the file being read is valid before moving on
+		try {
+			encoded = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Error. Check if file is in correct format.");
+		}
+		if (encoded == null) {
+			throw new AssertionError("Error. Unable to read the path of the file.");
+		}
 		String tempString = new String(encoded, Charset.defaultCharset());
 
 		byte[] bytes = tempString.getBytes();
@@ -147,7 +169,9 @@ public class FileAnalyzerController {
 		}
 		return binary.toString();
 	}
-
+	
+	// Takes in a full array of strings and return a trimmed down
+	// array with only unique characters
 	private ArrayList<String> gatherUniqueCharacters(String[] asciiArray) {
 		ArrayList<String> temp = new ArrayList<>();
 		for (int i = 0; i < asciiArray.length; i++) {
@@ -157,7 +181,11 @@ public class FileAnalyzerController {
 		}
 		return temp;
 	}
-
+	
+	// Reads in sequences of 0s and 1s that are stored in
+	// a string. Each sequence is 8 characters long and the
+	// corresponding ascii representation of that sequence is stored in
+	// a new index of a string array. This array is returned in the end
 	private String[] binaryToAscii(String s) {
 		int arrayLength = (int) Math.ceil(((s.length() / (double)8)));
 		String[] result = new String[arrayLength];
@@ -184,11 +212,11 @@ public class FileAnalyzerController {
 			sb2.append(new Character((char)charCode).toString());
 		}
 		String stringWithNonAscii = sb2.toString();
-		//String stringWithOnlyAscii = stringWithNonAscii.replaceAll("\\P{InBasic_Latin}", "");
 		String stringWithOnlyAscii = stringWithNonAscii.replaceAll("[^\\x00-\\x7F]", "");
 		return stringToArray(stringWithOnlyAscii);
 	}
-
+	
+	// Converts an array that holds strings to one long string
 	private String asciiArrayToString(String[] asciiArray) {
 		StringBuilder sb = new StringBuilder();
 		for (String e : asciiArray) {
@@ -211,8 +239,15 @@ public class FileAnalyzerController {
 		}
 		return sb.toString();
 	}
-
-	private int countOcurrences(String fullString, String subString) {
+	
+	// Compares a small string to the full string and count
+	// how many time that small string occurs in the full string
+	// and return that value
+	public int countOcurrences(String fullString, String subString) {
+		// Assertion. Checks if substring is shorter than full string
+		if (subString.length() > fullString.length()) {
+			throw new AssertionError("The substring is longer than the string it is being compared to.");
+		}
 		int lastIndex = 0;
 		int count = 0;
 
@@ -227,7 +262,12 @@ public class FileAnalyzerController {
 		}
 		return count;
 	}
-
+	
+	// Makes a 2D array. An array of arrays of FileAnalyzerStringPairs.
+	// The size of the array is based on the size of the string array argument
+	// which at this point should be a string array of unique characters.
+	// A string pair combination is created from this array and its occurrences
+	// is counted in fullString. This number is stored in the array.
 	private ArrayList<ArrayList<FileAnalyzerStringPairs>> makeStringPairs(String[] asciiArray, String fullString) {
 		ArrayList<ArrayList<FileAnalyzerStringPairs>> temp = new ArrayList<ArrayList<FileAnalyzerStringPairs>>();
 		for (int i = 0; i < asciiArray.length; i++) {
@@ -264,6 +304,7 @@ public class FileAnalyzerController {
 		return stringPairsArray;
 	}
 	
+	// Used to print out our 2D array to the GUI in a readable format
 	private String printOutMatrix(ArrayList<ArrayList<FileAnalyzerStringPairs>> stringPairsArray) {
 		String returnString = "";
 		boolean first = true;
@@ -283,7 +324,7 @@ public class FileAnalyzerController {
 	}
 
 	// Jervin
-	private String cipherString(String [] symbolsArr, int uniqueCutoff){
+	public String cipherString(String [] symbolsArr, int uniqueCutoff) {
 		HashMap<String, Integer> symbolsFrequency = new HashMap<>();
 		String cipher = "";
 		int counter = 0;
@@ -424,7 +465,9 @@ public class FileAnalyzerController {
 		if(high > i)
 			quickSort(arr, i, high);
 	}
-
+	
+	// Takes in a hashmap that has characters it would replace. Goes through a
+	// string array and replace all values in it based on that hashmap
 	private String[] arrToRandom(HashMap<String, String> randomAsciiHashMap, String[] outputArr) {
 		StringBuilder sb = new StringBuilder();
 		String key;
@@ -439,11 +482,15 @@ public class FileAnalyzerController {
 		String tempString = sb.toString();
 		return stringToArray(tempString);
 	}
-
+	
+	// Converts a regular string to a string array. Each index
+	// holds one character
 	private String[] stringToArray(String tempString) {
 		return tempString.split("(?!^)");
 	}
-
+	
+	// Generates a randomized hashmap that represents one ascii
+	// character with another
 	private HashMap<String, String> randomAsciiHashMap() {
 		HashMap<String, String> hMap = new HashMap<String, String>();
 		ArrayList<String> randomAscii = new ArrayList<>();
@@ -466,7 +513,9 @@ public class FileAnalyzerController {
 		}
 		return hMap;
 	}
-
+	
+	// Runs when the save file button is pushed. Pops up the GUI and
+	// ask the user where to save the file
 	public void saveFile(JFileChooser fileChooser) throws FileNotFoundException {
 		int returnVal = fileChooser.showSaveDialog(_view);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -480,7 +529,9 @@ public class FileAnalyzerController {
 			}
 		}
 	}
-
+	
+	// Copy all the values in _outputString to the clipboard so the user can paste
+	// the value somewhere else
 	public void copyClipboard() {
 		StringSelection strSelec = new StringSelection(_outputString);
 		Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();

@@ -60,7 +60,9 @@ public class FileAnalyzerView extends JFrame {
 	
 	// anthony
 	private JLabel _labelFileName;
-
+	
+	// Constructor. Creates new instances of each GUI elements we
+	// are going to use
 	public FileAnalyzerView() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -80,12 +82,12 @@ public class FileAnalyzerView extends JFrame {
 			e.printStackTrace();
 		}
 
-		_openFileChooser = new JFileChooser(){
+		_openFileChooser = new JFileChooser() {
 			/**
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-
+			
 			@Override
 			public void approveSelection() {
 				File f = getSelectedFile();
@@ -119,12 +121,17 @@ public class FileAnalyzerView extends JFrame {
 			private static final long serialVersionUID = 1L;
 
 			@Override
+			// Show only .txt files on the file browser
+			// by default. Still allows user to view file other
+			// than .txt.
 			public void approveSelection() {
 				File f = getSelectedFile();
 				String filePath = f.getAbsolutePath();
 				if (!filePath.endsWith(".txt")) {
 					f = new File(filePath + ".txt");
 				}
+				// Assertion. Asks the user if they want to overwrite a file
+				// if the file name is the same
 				if (f.exists() && getDialogType() == SAVE_DIALOG) {
 					int result = JOptionPane.showConfirmDialog(this,"Overwrite file?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
 					switch(result){
@@ -159,12 +166,12 @@ public class FileAnalyzerView extends JFrame {
 		_bottomPanel = new JPanel();
 		_bottomPanel.setLayout(new FlowLayout());
 
-		// anthony
 		_labelFileName = new JLabel("No file selected.");
 		
 		_bottomPanel.add(_labelFileName);
-		// anthony
 		
+		// Runs openFile function from controller when the
+		// "Open File" button is pushed.
 		_btnOpenFile = new JButton("Open File");
 		_btnOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -280,7 +287,8 @@ public class FileAnalyzerView extends JFrame {
 	public JLabel getFileLabel() {
 		return _labelFileName;
 	}
-
+	
+	// Starting method that links the controller to the view
 	public void setController(FileAnalyzerController controller) {
 		_controller = controller;
 	}
