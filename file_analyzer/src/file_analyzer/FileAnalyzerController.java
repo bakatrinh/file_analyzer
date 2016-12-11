@@ -226,6 +226,8 @@ public class FileAnalyzerController {
 		return sb.toString();
 	}
 
+	// Takes in a hashmap that contains all the random ascii characters
+	// Returns in string format of the hashmap
 	private String hashMapToStringArray(HashMap<String, String> randomAsciiHashMap) {
 		StringBuilder sb = new StringBuilder();
 		Set<String> keySet = randomAsciiHashMap.keySet();
@@ -286,6 +288,8 @@ public class FileAnalyzerController {
 		return temp;
 	}
 	
+	// Takes in a 2d Array list of the string pairs
+	// Returns the 2d array list of the string pairs but with the sum of all rows divided by each section in that row
 	private ArrayList<ArrayList<FileAnalyzerStringPairs>> sumNDivide(ArrayList<ArrayList<FileAnalyzerStringPairs>> stringPairsArray) {		
 		double sum = 0;
 		double div = 0;
