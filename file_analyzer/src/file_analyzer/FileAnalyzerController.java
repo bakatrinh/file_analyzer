@@ -297,13 +297,16 @@ public class FileAnalyzerController {
 		for (int i = 0; i < stringPairsArray.size(); i++) {
 			for (int j = 0; j < stringPairsArray.get(i).size(); j++) {
 				sum += stringPairsArray.get(i).get(j).getSumOccurrences();
-			}			
-			for (int k = 0; k < stringPairsArray.get(i).size(); k++) {
-				if (stringPairsArray.get(i).get(k).getSumOccurrences() != 0) div = stringPairsArray.get(i).get(k).getSumOccurrences() / sum;
-				else div = 0.0;
-				stringPairsArray.get(i).set(k, new FileAnalyzerStringPairs(stringPairsArray.get(i).get(k).getPair(), div));
+			}		
+			// Test if sum is 0, if so, it can't be divided by zero so the program will continue in the loop
+			if (sum != 0) {
+				for (int k = 0; k < stringPairsArray.get(i).size(); k++) {
+					if (stringPairsArray.get(i).get(k).getSumOccurrences() != 0) div = stringPairsArray.get(i).get(k).getSumOccurrences() / sum;
+					else div = 0.0;
+					stringPairsArray.get(i).set(k, new FileAnalyzerStringPairs(stringPairsArray.get(i).get(k).getPair(), div));
+				}
+				sum = 0;
 			}
-			sum = 0;
 		}
 		
 		return stringPairsArray;
