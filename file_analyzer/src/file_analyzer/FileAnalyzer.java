@@ -20,7 +20,7 @@ public class FileAnalyzer {
 	// production code
 	public static void main(String[] args) {
 		// Uncomment for testing
-		testingCodes();
+		//testingCodes();
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
